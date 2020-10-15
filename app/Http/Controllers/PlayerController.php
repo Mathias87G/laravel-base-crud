@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Player;
 
 class PlayerController extends Controller
 {
@@ -13,7 +14,8 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        //
+      $data = Player::all();
+      return view('index', compact('data'));
     }
 
     /**
@@ -23,7 +25,7 @@ class PlayerController extends Controller
      */
     public function create()
     {
-        //
+        return view('create');
     }
 
     /**
@@ -34,7 +36,17 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $playerNew = new Player;
+        $playerNew->nome = $data['nome'];
+        $playerNew->cognome = $data['cognome'];
+        $playerNew->ruolo = $data['ruolo'];
+        $playerNew->squadra = $data['squadra'];
+        $playerNew->prezzo_base = $data['prezzo_base'];
+        $playerNew->prezzo_asta = $data['prezzo_asta'];
+        $playerNew->note = $data['note'];
+        $playerNew->save();
+        dd($playerNew);
     }
 
     /**
