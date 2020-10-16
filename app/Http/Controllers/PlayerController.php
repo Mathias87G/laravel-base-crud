@@ -37,16 +37,21 @@ class PlayerController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        $request->validate([
+          'nome' => 'required|max:100',
+          'cognome' => 'required|max:100',
+          'ruolo' => 'required|max:1',
+          'squadra' => 'required|max:50',
+          'prezzo_base' => 'required',
+          'prezzo_asta' => 'required',
+          'note' => 'max:1000',
+        ]);
         $playerNew = new Player;
-        $playerNew->nome = $data['nome'];
-        $playerNew->cognome = $data['cognome'];
-        $playerNew->ruolo = $data['ruolo'];
-        $playerNew->squadra = $data['squadra'];
-        $playerNew->prezzo_base = $data['prezzo_base'];
-        $playerNew->prezzo_asta = $data['prezzo_asta'];
-        $playerNew->note = $data['note'];
-        $playerNew->save();
-        dd($playerNew);
+        $playerNew->fill($data);
+        $saved = $playerNew->save();
+        if($saved){
+          return redirect()->route('players.index');
+        }
     }
 
     /**
@@ -55,9 +60,9 @@ class PlayerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Player $player)
     {
-        //
+        return view('show',compact('player'));
     }
 
     /**
@@ -66,9 +71,9 @@ class PlayerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Player $player)
     {
-        //
+        return view('create',compact('player'));
     }
 
     /**
@@ -78,9 +83,11 @@ class PlayerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Player $player)
     {
-        //
+        $data = $request->all();
+        $player->update($data);
+        return view('show',compact('player'));
     }
 
     /**
@@ -89,8 +96,10 @@ class PlayerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Player $player)
     {
-        //
+      $player->delete();
+      return redirect()->route('players.index');
+
     }
 }
